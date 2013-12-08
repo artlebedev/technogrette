@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rolling number</title>
+
+  <script src="http://yandex.st/jquery/1.9.1/jquery.js"></script>
+  <script src="../../als.js"></script>
+  <script src="../rolling-number.js"></script>
+</head>
+<body>
+
+  <span class="roll1">10000</span>
+  <button class="roll1-start">Roll it</button>
+  <script>
+    var roll1 = new als.RollingNumber(jQuery('.roll1'));
+
+    jQuery('.roll1-start').click(
+        function() {
+          roll1.setValue(roll1.getValue() + 10000);
+        });
+  </script>
+
+
+
+
+  <br /><br /><br /><br /><br />
+
+
+
+  <p>You can also set value without rolling if you need it:</p>
+  <span class="roll2">10000</span>
+  <button class="roll2-start">Roll it</button>
+  <script>
+    var roll2 = new als.RollingNumber(jQuery('.roll2'));
+
+    jQuery('.roll2-start').click(
+        function() {
+          roll2.setValueWithoutRoll(roll2.getValue() + 10000);
+        });
+  </script>
+
+
+
+
+  <br /><br /><br /><br /><br />
+
+
+
+
+  <span>It's possible to hide any parent block if number is rolled to 0:</span>
+  <br />
+  <p class="roll3-holder" style="display:inline-block">
+    <span class="roll3">10000</span> руб.
+  </p>
+  <button class="roll3-start">Roll it</button>
+  <script>
+    var roll3 = new als.RollingNumber(jQuery('.roll3'), jQuery('.roll3-holder'));
+
+    var flag = false;
+    jQuery('.roll3-start').click(
+        function() {
+          var sign = flag ? 1 : -1;
+          roll3.setValue(roll3.getValue() + sign * 10000);
+
+          flag = !flag;
+        });
+  </script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Switcher</title>
+
+  <script src="http://yandex.st/jquery/1.9.1/jquery.js"></script>
+  <script src="../switcher.js"></script>
+</head>
+<body>
+
+
+  <p>You can set linkage between switcher and views using 'for_&lt;name>' css classes:</p>
+  <ul class="switcher switcher1">
+    <li class="for_view1 selected">
+      <span class="pseudo">For view 1</span>
+    </li>
+    <li class="for_view3">
+      <span class="pseudo">For view 3</span>
+    </li>
+    <li class="for_view2">
+      <span class="pseudo">For view 2</span>
+    </li>
+    <li class="for_all">
+      <span class="pseudo">All views</span>
+    </li>
+  </ul>
+  <div class="views1">
+    <div class="view view1">View 1</div>
+    <div class="view view2">View 2</div>
+    <div class="view view3">View 3</div>
+  </div>
+  <script>
+    new als.Switcher(
+        jQuery('.switcher1 li'), jQuery('.views1 .view'));
+  </script>
+
+
+
+
+  <br /><br /><br /><br /><br />
+
+
+
+
+  <p>You can also set linkage using regular order of switcher elements and views (1st switcher element is for 1st view and so forth):</p>
+  <ul class="switcher switcher2">
+    <li>
+      <span class="pseudo">For view 1</span>
+    </li>
+    <li class="selected">
+      <span class="pseudo">For view 2</span>
+    </li>
+    <li>
+      <span class="pseudo">For view 3</span>
+    </li>
+  </ul>
+  <div class="views2">
+    <div class="view view1">View 1</div>
+    <div class="view view2">View 2</div>
+    <div class="view view3">View 3</div>
+  </div>
+  <script>
+    new als.Switcher(
+        jQuery('.switcher2 li'), jQuery('.views2 .view'));
+  </script>
+
+
+
+
+  <br /><br /><br /><br /><br />
+
+
+
+
+  <p>It's possible to subscribe on switcher change event and get selected view abbr and index:</p>
+  <ul class="switcher switcher3">
+    <li class="for_view1 selected">
+      <span class="pseudo">For view 1</span>
+    </li>
+    <li class="for_view3">
+      <span class="pseudo">For view 3</span>
+    </li>
+    <li class="for_view2">
+      <span class="pseudo">For view 2</span>
+    </li>
+    <li class="for_all">
+      <span class="pseudo">All views</span>
+    </li>
+  </ul>
+  Selected view abbr: <span class="mirror3-abbr"></span>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Selected view index: <span class="mirror3-index"></span>
+  <div class="views3">
+    <div class="view view1">View 1</div>
+    <div class="view view2">View 2</div>
+    <div class="view view3">View 3</div>
+  </div>
+  <script>
+    var switcher3 = new als.Switcher(
+        jQuery('.switcher3 li'), jQuery('.views3 .view'));
+
+    switcher3.addEventListener(
+        als.Switcher.EventType.CHANGE,
+        function() {
+          syncAbbr3();
+          syncIndex3()
+        });
+
+    function syncAbbr3() {
+      jQuery('.mirror3-abbr').html(switcher3.getName());
+    }
+    syncAbbr3();
+
+    function syncIndex3() {
+      jQuery('.mirror3-index').html(switcher3.getIndex());
+    }
+    syncIndex3();
+  </script>
+
+
+
+
+  <br /><br /><br /><br /><br />
+
+
+
+  <p>You're not required to pass views, so you can implement custom views switching:</p>
+  <ul class="switcher switcher4">
+    <li class="for_all">
+      <span class="pseudo">All views</span>
+    </li>
+    <li class="for_view1">
+      <span class="pseudo">For view 1</span>
+    </li>
+    <li class="for_view3">
+      <span class="pseudo">For view 3</span>
+    </li>
+    <li class="for_view2">
+      <span class="pseudo">For view 2</span>
+    </li>
+  </ul>
+  Selected view abbr: <span class="mirror4-abbr"></span>
+
+  <script>
+    var switcher4 = new als.Switcher(jQuery('.switcher4 li'));
+    switcher4.setName(als.Switcher.NAME_ITEM_FOR_ALL);
+
+    switcher4.addEventListener(
+        als.Switcher.EventType.CHANGE,
+        syncAbbr4);
+
+    function syncAbbr4() {
+      jQuery('.mirror4-abbr').html(switcher4.getName());
+    }
+    syncAbbr4();
+  </script>
+
+
+
+  <style>
+    html, body{
+      margin: 0;
+    }
+    body{
+      padding: 30px;
+      background: white;
+      line-height: 1.4;
+    }
+
+    .pseudo{
+      color: #3963a6;
+      border-bottom: 1px dotted;
+      cursor: pointer;
+    }
+    .pseudo:hover{
+      color: #c90000;
+    }
+    .not_display{
+      display: none;
+    }
+
+    .switcher{
+      display: inline-block;
+      list-style-type: none;
+      padding: 0;
+      margin: 0 0 1em -0.5em;
+    }
+    .switcher li{
+      display: inline-block;
+      padding: 0.2em 0.5em;
+      margin-right:  1em;
+    }
+    .switcher .selected{
+      background: #ddd;
+    }
+    .switcher .selected .pseudo{
+      color: black !important;
+      border: none;
+      cursor: auto;
+    }
+
+    .view{
+      padding: 10px;
+      border: 1px solid #999;
+    }
+
+  </style>
+
+</body>
+</html>

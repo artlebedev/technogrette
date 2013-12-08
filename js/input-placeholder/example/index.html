@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Input placeholder</title>
+
+  <script src="http://yandex.st/jquery/1.9.1/jquery.js"></script>
+  <script src="../input-placeholder.js"></script>
+</head>
+<body>
+
+  <input placeholder="placeholder" />
+
+  <script>
+    new als.InputPlaceholder(jQuery('input'));
+
+//  You're also able to use static helper method
+//  to decorate all inputs having placeholders:
+//  als.InputPlaceholder.decorateAllInputsWithPlaceholders();
+  </script>
+
+  <style>
+    input.empty{
+      color: #aaa;
+    }
+  </style>
+
+</body>
+</html>

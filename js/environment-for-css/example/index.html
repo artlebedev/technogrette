@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <title>Environment for css</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <script src="../environment-for-css.js"></script>
+</head>
+<body>
+  <p>Take a look at &lt;html> element class attribute to test environment-for-css.js</p>
+
+  <br />
+
+  <p class="test1">This paragraph should be red in IE8.</p>
+  <style>
+    .ie8 .test1{
+      color: red;
+    }
+  </style>
+
+  <p class="test2">This paragraph should be bold in Firefox on Windows.</p>
+  <style>
+    .firefox.windows .test2{
+      font-weight: bold;
+    }
+  </style>
+
+  <p class="test3">This paragraph should be striked on iPhone.</p>
+  <style>
+    .iphone .test3{
+      text-decoration: line-through;
+    }
+  </style>
+
+</body>
+</html>

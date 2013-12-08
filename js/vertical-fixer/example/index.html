@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vertical fixer</title>
+
+  <script src="http://yandex.st/jquery/1.9.1/jquery.js"></script>
+  <script src="../../als.js"></script>
+  <script src="../vertical-fixer.js"></script>
+</head>
+<body>
+
+  <style>
+    body{
+      padding: 10px 0;
+      margin: 0 30px;
+      background: white;
+    }
+    .clear{
+      clear: both;
+    }
+
+    .main{
+      float: left;
+      width: 70%;
+      height: 1200px;
+      background: #ddffff;
+    }
+
+    .extra{
+      position: relative;
+      float: left;
+      width: 30%;
+    }
+
+    .extra .holder{
+      position: fixed;
+      height: 200px;
+      background: #ffffcc;
+    }
+    .extra .holder.stopped{
+      position: absolute;
+    }
+
+    .footer{
+      height: 1500px;
+    }
+  </style>
+
+
+  <p class="intro">
+    Right extra content block is fixed when user is scrolling the page.
+    But it's moving only within a height of main content block
+  </p>
+
+  <div class="main">
+    Main content
+  </div>
+  <div class="extra">
+    <div class="holder">
+      Fixed extra content
+    </div>
+  </div>
+  <div class="clear"></div>
+
+  <p class="footer">Footer</p>
+
+  <script>
+    new als.VerticalFixer(
+        jQuery('.extra .holder'),
+        jQuery('.extra'),
+        jQuery('.main'),
+        jQuery('.extra'),
+        25);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multiple switcher</title>
+
+  <script src="http://yandex.st/jquery/1.9.1/jquery.js"></script>
+  <script src="../multiple-switcher.js"></script>
+</head>
+<body>
+
+
+  <p>Element index is used as its value by default:</p>
+  <ul class="switcher switcher1">
+    <li class="selected">
+      <span class="pseudo">Elem 1</span>
+    </li>
+    <li class="selected">
+      <span class="pseudo">Elem 2</span>
+    </li>
+    <li>
+      <span class="pseudo">Elem 3</span>
+    </li>
+  </ul>
+  Selected values: <span class="mirror"></span>
+
+  <script>
+    var switcher = new als.MultipleSwitcher(jQuery('.switcher1 li'));
+
+    switcher.addEventListener(
+        als.MultipleSwitcher.EventType.CHANGE,
+        sync);
+
+    function sync() {
+      jQuery('.mirror').html(
+          switcher.getSelectedValues().join(', '));
+    }
+    sync();
+  </script>
+
+
+
+
+
+  <br /><br /><br /><br /><br />
+
+
+
+
+
+  <p>You can assign element custom value using 'data-value' attribute:</p>
+  <ul class="switcher switcher2">
+    <li data-value="value1" class="selected">
+      <span class="pseudo">Elem 1</span>
+    </li>
+    <li data-value="value2">
+      <span class="pseudo">Elem 2</span>
+    </li>
+    <li data-value="value3" class="selected">
+      <span class="pseudo">Elem 3</span>
+    </li>
+  </ul>
+  Selected values: <span class="mirror2"></span>
+
+  <script>
+    var switcher2 = new als.MultipleSwitcher(jQuery('.switcher2 li'));
+
+    switcher2.addEventListener(
+        als.MultipleSwitcher.EventType.CHANGE,
+        sync2);
+
+    function sync2() {
+      jQuery('.mirror2').html(
+          switcher2.getSelectedValues().join(', '));
+    }
+    sync2();
+  </script>
+
+
+
+  <style>
+    html, body{
+      margin: 0;
+    }
+    body{
+      padding: 30px;
+      background: white;
+      line-height: 1.4;
+    }
+
+    .pseudo{
+      color: #3963a6;
+      border-bottom: 1px dotted;
+      cursor: pointer;
+    }
+    .pseudo:hover{
+      color: #c90000;
+    }
+
+    .switcher{
+      display: inline-block;
+      list-style-type: none;
+      padding: 0;
+      margin: 0 0 1em -0.5em;
+    }
+    .switcher li{
+      display: inline-block;
+      padding: 0.2em 0.5em;
+      margin-right:  1em;
+    }
+    .switcher .selected{
+      background: #ddd;
+    }
+  </style>
+
+</body>
+</html>

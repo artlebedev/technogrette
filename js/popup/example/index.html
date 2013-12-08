@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Popup</title>
+
+  <script src="http://yandex.st/jquery/1.9.1/jquery.js"></script>
+  <script src="../../als.js"></script>
+  <script src="../popup.js"></script>
+</head>
+<body>
+
+  <span class="pseudo opener1">Simple popup</span>
+  <div class="popup popup1 not_display">
+    <span class="popup_close">&times;</span>
+    Popup content
+  </div>
+  <script type="text/javascript">
+    var popup1 = new als.Popup(jQuery('.popup1'), jQuery('.opener1'));
+
+    popup1.addEventListener(
+        als.Popup.EventType.BEFORE_OPEN,
+        function() {
+          var
+              popupRoot = jQuery('.popup1'),
+              opener = jQuery('.opener1');
+
+          popupRoot.css({
+            left: opener.offset().left + opener.width() + 20,
+            top: opener.offset().top - popupRoot.innerHeight() / 2 + 10
+          });
+        });
+  </script>
+
+
+
+
+  <br /><br /><br /><br /><br /><br />
+
+
+
+  <!-- We use 'popup_positioner' css class here to match 2 openers visually -->
+  <span class="pseudo popup_positioner opener2">Opener above popup</span>
+  <div class="popup popup2" style="display:none">
+    <span class="popup_close">&times;</span>
+
+    <span class="pseudo popup_positioner opener2">Opener above popup</span>
+    <br /><br />
+    <strong>Popup content</strong>
+  </div>
+  <script type="text/javascript">
+    // We use `opt_duration` 4th argument to toggle popup smoothly
+    new als.Popup(
+        jQuery('.popup2'), jQuery('.opener2'), undefined, 150);
+  </script>
+
+
+
+
+
+  <br /><br /><br /><br /><br /><br />
+
+
+
+
+  <span class="pseudo opener3">Modal popup</span>
+  <div class="popup3 not_display">
+    <div class="popup holder">
+      <span class="popup_close">&times;</span>
+      <p>Modal popup content.</p>
+      <p>Click on dark area closes popup.</p>
+    </div>
+  </div>
+  <script type="text/javascript">
+    // We pass dark area root as `opt_externalClickCatcher` 3rd argument here
+    new als.Popup(
+        jQuery('.popup3'), jQuery('.opener3'), jQuery('.popup3'));
+  </script>
+
+
+
+
+
+  <br /><br /><br /><br /><br /><br />
+
+
+
+
+  <span class="pseudo opener4">Popup initialized before opener</span>
+  <br />
+  <span>(e.g. when opener is ajax loaded)</span>
+  <div class="popup popup4 not_display">
+    <span class="popup_close">&times;</span>
+    Popup content
+  </div>
+  <script type="text/javascript">
+    // 2nd argument `opt_opener` is omitted
+    var popup4 = new als.Popup(jQuery('.popup4'));
+
+    jQuery('.opener4').click(
+        function(evt) {
+          popup4.toggle();
+          evt.stopPropagation();
+        });
+
+    popup4.addEventListener(
+        als.Popup.EventType.BEFORE_OPEN,
+        function() {
+          var
+              popupRoot = jQuery('.popup4'),
+              opener = jQuery('.opener4');
+
+          popupRoot.css({
+            left: opener.offset().left + opener.width() + 30,
+            top: opener.offset().top - 20
+          });
+        });
+  </script>
+
+
+
+  <style>
+    html, body{
+      margin: 0;
+    }
+    body{
+      padding: 50px;
+      background: white;
+      line-height: 1.4;
+    }
+
+    .pseudo{
+      color: #3963a6;
+      border-bottom: 1px dotted;
+      cursor: pointer;
+    }
+    .pseudo:hover{
+      color: #c90000;
+    }
+    .not_display{
+      display: none;
+    }
+
+    .popup{
+      position: absolute;
+      padding: 30px;
+      background: whitesmoke;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 0 15px gray;
+    }
+
+    .popup .popup_close{
+      font-size: 20px;
+      position: absolute;
+      right: 10px;
+      top: 7px;
+      cursor: pointer;
+    }
+    .popup .popup_close:hover{
+      color: #c90000;
+    }
+
+
+    .popup3{
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background: black;
+      background: rgba(0,0,0, 0.7);
+    }
+    .popup3 .holder{
+      position: absolute;
+      width: 500px;
+      left: 50%;
+      top: 100px;
+      margin-left: -280px;
+      padding: 100px 30px;
+      text-align: center;
+    }
+  </style>
+
+</body>
+</html>

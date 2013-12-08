@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Integer input</title>
+
+  <script src="http://yandex.st/jquery/1.9.1/jquery.js"></script>
+  <script src="https://raw.github.com/brandonaaron/jquery-mousewheel/master/jquery.mousewheel.js"></script>
+  <script src="../../als.js"></script>
+  <script src="../integer-input.js"></script>
+</head>
+<body>
+
+  <span>Simple number input having min="1" and unlimited max:</span>
+  <br />
+  <input value="50" class="input1" />
+  <script>
+    new als.IntegerInput(jQuery('.input1'));
+  </script>
+
+
+
+
+  <br /><br /><br /><br />
+
+
+
+
+  <span>Input having min="0", max="100", step="10" and incremented by mousewheel:</span>
+  <br />
+  <input class="input2" />
+  <script>
+    new als.IntegerInput(
+        jQuery('.input2'),
+        {
+          min: 0,
+          max: 100,
+          step: 10,
+          allowMousewheelChange: true
+        });
+  </script>
+
+
+
+
+  <br /><br /><br /><br />
+
+
+
+
+
+  <span>You can pass min, max and step in html attributes:</span>
+  <br />
+  <input class="input3" min="0" max="100" step="10" />
+  <script>
+    new als.IntegerInput(
+        jQuery('.input3'),
+        {
+          allowMousewheelChange: true
+        });
+  </script>
+
+
+
+
+  <br /><br /><br /><br />
+
+
+
+
+  <span>You can allow empty input value:</span>
+  <br />
+  <input class="input4" />
+  <script>
+    new als.IntegerInput(
+        jQuery('.input4'),
+        {
+          allowEmptyValue: true
+        });
+  </script>
+
+
+
+
+  <br /><br /><br /><br />
+
+
+
+
+  <span>It's possible to format number value:</span>
+  <br />
+  <input class="input5" value="10000" step="100" />
+  <script>
+    new als.IntegerInput(
+        jQuery('.input5'),
+        {
+          formatValue: true
+        });
+  </script>
+
+
+
+
+  <br /><br /><br /><br />
+
+
+
+
+  <span>You can subscribe on change event:</span>
+  <br />
+  <input class="input6" value="10000" step="100" />
+  &nbsp;value = <span class="mirror6">10000</span>
+  <script>
+    var input6 = new als.IntegerInput(jQuery('.input6'));
+
+    input6.addEventListener(
+        als.IntegerInput.EventType.CHANGE,
+        function() {
+          jQuery('.mirror6').html(input6.getValue());
+        });
+  </script>
+
+
+
+
+  <br /><br /><br /><br />
+
+
+
+
+  <span>It's also possible to process user input with 500ms delay to give user a chance to enter a long number before event trigger</span>
+  <br />
+  <input class="input7" value="10000" step="100" />
+  &nbsp;value = <span class="mirror7">10000</span>
+  <script>
+    var input7 = new als.IntegerInput(
+        jQuery('.input7'),
+        {
+          processKeyboardInputWithDelay: true
+        });
+
+    input7.addEventListener(
+        als.IntegerInput.EventType.CHANGE,
+        function() {
+          jQuery('.mirror7').html(input7.getValue());
+        });
+  </script>
+
+  <style type="text/css">
+    input{
+      width: 5em;
+    }
+  </style>
+
+
+</body>
+</html>
