@@ -1,0 +1,43 @@
+{
+
+  "id": "compile",
+
+  "inputs": [
+    "../src/als.js",
+    "../src/environment-for-css/environment-for-css.js",
+    "../src/input-placeholder/input-placeholder.js",
+    "../src/integer-input/integer-input.js",
+    "../src/multiple-switcher/multiple-switcher.js",
+    "../src/popup/popup.js",
+    "../src/retina-detector/retina-detector.js",
+    "../src/rolling-number/rolling-number.js",
+    "../src/sprite-animator/sprite-animator.js",
+    "../src/switcher/switcher.js",
+    "../src/vertical-fixer/vertical-fixer.js",
+    "../src/vertical-scroller/vertical-scroller.js"
+  ],
+
+  "externs": [
+    "//jquery-1.9.js"
+  ],
+
+  "checks": {
+    "const": "ERROR",
+    "checkTypes": "ERROR",
+    "checkVars": "ERROR",
+    "visibility": "ERROR",
+    "checkDebuggerStatement": "WARNING",
+    "strictModuleDepCheck": "WARNING"
+  },
+
+  "ambiguate-properties": true,
+  "disambiguate-properties": true,
+
+  "mode": "ADVANCED",
+  "level": "VERBOSE",
+
+  "output-file": "/dev/null",
+  "output-charset": "utf8",
+  "paths": "../src"
+
+}

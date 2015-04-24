@@ -41,7 +41,7 @@ Linter.ERRORS_TO_IGNORE = [
  * @const
  * @type {string}
  */
-Linter.SRC_ROOT = '../js';
+Linter.SRC_ROOT = '../src';
 
 /**
  * @const
