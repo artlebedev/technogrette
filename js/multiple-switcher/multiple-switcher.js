@@ -15,11 +15,14 @@
  * @author Alexander Samilyak (aleksam241@gmail.com)
  */
 
-var als = als || {};
+
+
+goog.provide('als.MultipleSwitcher');
 /*
- Replace this with `goog.provide('als.MultipleSwitcher')`
- if your project framework is Closure Library.
+  Replace this with `var als = als || {};`
+  if your project is not dependant on Closure Library.
 */
+
 
 
 /**
@@ -87,7 +90,7 @@ als.MultipleSwitcher.EventType = {
  * @param {string} value
  * @param {string=} opt_author
  * @constructor
- * @extends {jQuery.Event}
+ * @extends {jQuery.event}
  */
 als.MultipleSwitcher.ChangeEvent = function(value, opt_author) {
   /**
@@ -257,7 +260,7 @@ als.MultipleSwitcher.prototype.addEventListener = function(
 
 /**
  * @param {als.MultipleSwitcher.EventType} eventType
- * @param {function(!jQuery.event)} callback
+ * @param {function(!jQuery.event=)} callback
  */
 als.MultipleSwitcher.prototype.removeEventListener = function(
     eventType, callback) {
@@ -390,7 +393,7 @@ als.MultipleSwitcher.Item.prototype.initValue_ = function() {
   /** @type {string} */
   var value;
 
-  var data = (/** @type {!Object} */ this.root_.data('value'));
+  var data = /** @type {!Object} */ (this.root_.data('value'));
 
   if (data === undefined) {
     value = this.index_.toString();

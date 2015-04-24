@@ -17,14 +17,11 @@
  * @author Alexander Samilyak (aleksam241@gmail.com)
  */
 
-// @require als.js.
-var als = als || {};
+goog.provide('als.RollingNumber');
+goog.require('als');
 /*
- Replace this with:
-   goog.provide('als.RollingNumber');
-   goog.require('als');
-
- if your project framework is Closure Library.
+  Replace this with `var als = als || {};`
+  if your project is not dependant on Closure Library.
 */
 
 
@@ -129,7 +126,7 @@ als.RollingNumber.prototype.setValueWithoutRoll = function(value) {
 als.RollingNumber.prototype.initValue_ = function() {
   /** @type {number} */
   var maybeNumber = als.cleanToNumber(
-      (/** @type {string} */ this.root_.eq(0).text()));
+      /** @type {string} */ (this.root_.eq(0).text()));
 
   this.setValue_(isNaN(maybeNumber) ? 0 : maybeNumber, false);
 };

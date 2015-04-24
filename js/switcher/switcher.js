@@ -24,10 +24,10 @@
  */
 
 
-var als = als || {};
+goog.provide('als.Switcher');
 /*
- Replace this with `goog.provide('als.Switcher')`
- if your project framework is Closure Library.
+  Replace this with `var als = als || {};`
+  if your project is not dependant on Closure Library.
 */
 
 
@@ -108,7 +108,7 @@ als.Switcher.EventType = {
  * @param {?number} index
  * @param {string=} opt_author
  * @constructor
- * @extends {jQuery.Event}
+ * @extends {jQuery.event}
  */
 als.Switcher.ChangeEvent = function(index,  opt_author) {
   /**
@@ -237,7 +237,7 @@ als.Switcher.prototype.addEventListener = function(eventType, callback) {
 
 /**
  * @param {als.Switcher.EventType} eventType
- * @param {function(!jQuery.event)} callback
+ * @param {function(!jQuery.event=)} callback
  */
 als.Switcher.prototype.removeEventListener = function(eventType, callback) {
   this.eventsDispatcher_.unbind(eventType, callback);

@@ -28,14 +28,11 @@
 
 
 
-// @require als.js.
-var als = als || {};
+goog.provide('als.Popup');
+goog.require('als');
 /*
- Replace this with:
-    goog.provide('als.Popup');
-    goog.require('als');
-
- if your project framework is Closure Library.
+  Replace this with `var als = als || {};`
+  if your project is not dependant on Closure Library.
 */
 
 
@@ -69,9 +66,8 @@ als.Popup = function(root, opt_opener, opt_externalClickCatcher, opt_duration) {
   /**
    * @private
    */
-  this.closer_ =
-      (/** @type {!jQuery} */ this.root_.find(
-          '.' + als.Popup.CLASS_CLOSE_BUTTON));
+  this.closer_ = /** @type {!jQuery} */
+      (this.root_.find('.' + als.Popup.CLASS_CLOSE_BUTTON));
 
   /**
    * @type {jQuery}
@@ -88,8 +84,8 @@ als.Popup = function(root, opt_opener, opt_externalClickCatcher, opt_duration) {
   /**
    * @private
    */
-  this.externalClickCatcher_ = /** @type {!jQuery} */ jQuery(
-      opt_externalClickCatcher || document);
+  this.externalClickCatcher_ = /** @type {!jQuery} */
+      (jQuery(opt_externalClickCatcher || document));
 
   /**
    * @type {?(string|number)}
@@ -256,7 +252,7 @@ als.Popup.prototype.addEventListener = function(eventType, callback) {
 
 /**
  * @param {als.Popup.EventType} eventType
- * @param {function(!jQuery.event)} callback
+ * @param {function(!jQuery.event=)} callback
  */
 als.Popup.prototype.removeEventListener = function(eventType, callback) {
   this.eventsDispatcher_.unbind(eventType, callback);
@@ -294,11 +290,11 @@ als.Popup.prototype.findPositioners_ = function() {
       this.opener_.find('.' + als.Popup.CLASS_POSITIONER);
 
 
-  if (positionerInsidePopup.size()) {
+  if (positionerInsidePopup.length) {
     this.positionerInsidePopup_ = positionerInsidePopup;
 
     this.positionerOutsidePopup_ =
-        positionerOutsidePopup.size() ? positionerOutsidePopup : this.opener_;
+        positionerOutsidePopup.length ? positionerOutsidePopup : this.opener_;
   }
 };
 
@@ -328,7 +324,7 @@ als.Popup.prototype.attachEvents_ = function() {
 
   jQuery(document).keyup(
       /**
-       * @param {!jQuery.Event} event
+       * @param {!jQuery.event} event
        */
       function(event) {
         if (event.which === als.Keyboard.ESCAPE) {
@@ -359,14 +355,14 @@ als.Popup.prototype.onCatcherClick_ = function(event) {
 
   /** @type {boolean} */
   var insidePopup = (
-      this.root_.is(event.target) || this.root_.has(event.target).size() > 0);
+      this.root_.is(event.target) || this.root_.has(event.target).length > 0);
 
   /** @type {boolean} */
   var insideOpener = false;
   if (this.opener_ !== null) {
     insideOpener = (
         this.opener_.is(event.target) ||
-        this.opener_.has(event.target).size() > 0);
+        this.opener_.has(event.target).length > 0);
   }
 
   /** @type {boolean} */
@@ -389,17 +385,14 @@ als.Popup.prototype.positionIfPossible_ = function() {
     return;
   }
 
-  var positionerOutsidePopupOffset =
-      /** @type {{left:number, top:number}} */
-      this.positionerOutsidePopup_.offset();
+  var positionerOutsidePopupOffset = /** @type {{left:number, top:number}} */
+      (this.positionerOutsidePopup_.offset());
 
-  var positionerInsidePopupOffset =
-      /** @type {{left:number, top:number}} */
-      this.positionerInsidePopup_.offset();
+  var positionerInsidePopupOffset = /** @type {{left:number, top:number}} */
+      (this.positionerInsidePopup_.offset());
 
   var popupOffset =
-      /** @type {{left:number, top:number}} */
-      this.root_.offset();
+      /** @type {{left:number, top:number}} */ (this.root_.offset());
 
   this.root_.css({
     left: (

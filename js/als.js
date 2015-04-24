@@ -15,10 +15,10 @@
  */
 
 
-var als = als || {};
+goog.provide('als');
 /*
- Replace this with `goog.provide('als')`
- if your project framework is Closure Library.
+  Replace this with `var als = als || {};`
+  if your project is not dependant on Closure Library.
 */
 
 
@@ -62,7 +62,7 @@ als.parseInt = function(num) {
  * @return {number}
  */
 als.getBlockWidth = function(block) {
-  return (/** @type {number} */ block.width());
+  return /** @type {number} */ (block.width());
 };
 
 
@@ -72,7 +72,7 @@ als.getBlockWidth = function(block) {
  * @return {number}
  */
 als.getBlockHeight = function(block) {
-  return (/** @type {number} */ block.height());
+  return /** @type {number} */ (block.height());
 };
 
 
@@ -82,7 +82,7 @@ als.getBlockHeight = function(block) {
  * @return {string}
  */
 als.getBlockAttr = function(block, attrName) {
-  var attr = (/** @type {(string | undefined)} */ block.attr(attrName));
+  var attr = /** @type {(string | undefined)} */ (block.attr(attrName));
 
   if (attr === undefined) {
     return '';
@@ -99,7 +99,7 @@ als.getBlockAttr = function(block, attrName) {
  */
 als.getBlockOffset = function(block, opt_relativeToBlock) {
   var globalOffset =
-      (/** @type {{ left: number, top: number }} */ block.offset());
+      /** @type {{ left: number, top: number }} */ (block.offset());
 
   /** @type {{ left: number, top: number }} */
   var relativeOffset = {
@@ -109,8 +109,8 @@ als.getBlockOffset = function(block, opt_relativeToBlock) {
 
   if (opt_relativeToBlock) {
     relativeOffset =
-        (/** @type {{ left: number, top: number }} */
-            opt_relativeToBlock.offset());
+        /** @type {{ left: number, top: number }} */
+        (opt_relativeToBlock.offset());
   }
 
   return {
@@ -140,7 +140,7 @@ als.getWindowHeight = function() {
  * @return {number}
  */
 als.getWindowScrollTop = function() {
-  return (/** @type {number} */ als.window.scrollTop());
+  return /** @type {number} */ (als.window.scrollTop());
 };
 
 
@@ -148,7 +148,7 @@ als.getWindowScrollTop = function() {
  * @return {number}
  */
 als.getWindowScrollLeft = function() {
-  return (/** @type {number} */ als.window.scrollLeft());
+  return /** @type {number} */ (als.window.scrollLeft());
 };
 
 

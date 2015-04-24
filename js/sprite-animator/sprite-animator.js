@@ -34,10 +34,10 @@
  */
 
 
-var als = als || {};
+goog.provide('als.SpriteAnimator');
 /*
- Replace this with `goog.provide('als.SpriteAnimator')`
- if your project framework is Closure Library.
+  Replace this with `var als = als || {};`
+  if your project is not dependant on Closure Library.
 */
 
 
@@ -309,7 +309,7 @@ als.SpriteAnimator.prototype.addEventListener = function(eventType, callback) {
 
 /**
  * @param {!als.SpriteAnimator.EventType} eventType
- * @param {function(!jQuery.event)} callback
+ * @param {function(!jQuery.event=)} callback
  */
 als.SpriteAnimator.prototype.
     removeEventListener = function(eventType, callback) {

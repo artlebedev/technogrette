@@ -18,14 +18,11 @@
  */
 
 
-// @require als.js.
-var als = als || {};
+goog.provide('als.IntegerInput');
+goog.require('als');
 /*
- Replace this with:
-   goog.provide('als.IntegerInput');
-   goog.require('als');
-
- if your project framework is Closure Library.
+  Replace this with `var als = als || {};`
+  if your project is not dependant on Closure Library.
 */
 
 
@@ -188,7 +185,7 @@ als.IntegerInput.EventType = {
 /**
  * @param {string=} opt_author
  * @constructor
- * @extends {jQuery.Event}
+ * @extends {jQuery.event}
  */
 als.IntegerInput.ChangeEvent = function(opt_author) {
   /**
@@ -270,7 +267,7 @@ als.IntegerInput.prototype.getMax = function() {
 
 /**
  * @param {als.IntegerInput.EventType} eventType
- * @param {function(!jQuery.Event)} callback
+ * @param {function(!jQuery.event)} callback
  */
 als.IntegerInput.prototype.addEventListener = function(eventType, callback) {
   this.eventsDispatcher_.bind(eventType, callback);
@@ -279,7 +276,7 @@ als.IntegerInput.prototype.addEventListener = function(eventType, callback) {
 
 /**
  * @param {als.IntegerInput.EventType} eventType
- * @param {function(!jQuery.Event)} callback
+ * @param {function(!jQuery.event=)} callback
  */
 als.IntegerInput.prototype.removeEventListener = function(eventType, callback) {
   this.eventsDispatcher_.unbind(eventType, callback);
@@ -438,24 +435,37 @@ als.IntegerInput.prototype.attachEvents_ = function() {
   var that = this;
 
   this.root_
-      .bind('keyup input', function(event) {
-        /** @type {number} */
-        var delay = that.keyboardInputWithDelay_ ?
-            als.IntegerInput.KEYBOARD_INPUT_DELAY :
-            0;
+      .bind(
+          'keyup input',
 
-        clearTimeout(that.keyboardInputTimeoutId_);
-        that.keyboardInputTimeoutId_ = setTimeout(
-            function() { that.onInputChange_(event); }, delay);
-      })
+          /**
+           * @param {!jQuery.event} event
+           */
+          function(event) {
+            /** @type {number} */
+            var delay = that.keyboardInputWithDelay_ ?
+                als.IntegerInput.KEYBOARD_INPUT_DELAY :
+                0;
 
-      .blur(function(event) {
-        that.onInputChange_(event);
+            clearTimeout(that.keyboardInputTimeoutId_);
+            that.keyboardInputTimeoutId_ = setTimeout(
+                function() {
+                  that.onInputChange_(event);
+                },
+                delay);
+          })
 
-        if (that.isFormatValue_) {
-          that.formatValue_();
-        }
-      })
+      .blur(
+          /**
+           * @param {!jQuery.event} event
+           */
+          function(event) {
+            that.onInputChange_(event);
+
+            if (that.isFormatValue_) {
+              that.formatValue_();
+            }
+          })
 
       .focus(
           function() {
@@ -487,7 +497,7 @@ als.IntegerInput.prototype.attachEvents_ = function() {
 
     this.root_.mousewheel(
         /**
-         * @param {!jQuery.Event} event
+         * @param {!jQuery.event} event
          * @param {number} delta
          */
         function(event, delta) {
@@ -511,7 +521,7 @@ als.IntegerInput.prototype.attachEvents_ = function() {
 
 
 /**
- * @param {!jQuery.Event} event
+ * @param {!jQuery.event} event
  * @private
  */
 als.IntegerInput.prototype.onInputChange_ = function(event) {
@@ -574,7 +584,7 @@ als.IntegerInput.prototype.unformatValue_ = function() {
  * @private
  */
 als.IntegerInput.prototype.getInputValue_ = function() {
-  return (/** @type {string} */ this.root_.val());
+  return /** @type {string} */ (this.root_.val());
 };
 
 

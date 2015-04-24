@@ -23,14 +23,11 @@
  */
 
 
-// @require als.js.
-var als = als || {};
+goog.provide('als.WindowScroller');
+goog.require('als');
 /*
- Replace this with:
-   goog.provide('als.WindowScroller');
-   goog.require('als');
-
- if your project framework is Closure Library.
+  Replace this with `var als = als || {};`
+  if your project is not dependant on Closure Library.
 */
 
 

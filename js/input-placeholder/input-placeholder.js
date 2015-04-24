@@ -22,10 +22,11 @@
  * @author Alexander Samilyak (aleksam241@gmail.com)
  */
 
-var als = als || {};
+
+goog.provide('als.InputPlaceholder');
 /*
- Replace this with `goog.provide('als.InputPlaceholder')`
- if your project framework is Closure Library.
+  Replace this with `var als = als || {};`
+  if your project is not dependant on Closure Library.
 */
 
 
@@ -48,7 +49,7 @@ als.InputPlaceholder = function(root) {
    * @type {string}
    * @private
    */
-  this.placeholder_ = (/** @type {string} */ this.root_.attr('placeholder'));
+  this.placeholder_ = /** @type {string} */ (this.root_.attr('placeholder'));
 
 
   this.initState_();
@@ -214,5 +215,5 @@ als.InputPlaceholder.prototype.isEmpty_ = function() {
  */
 als.InputPlaceholder.prototype.getValue_ = function() {
   return jQuery.trim(
-      (/** @type {string} */ this.root_.val()));
+      /** @type {string} */ (this.root_.val()));
 };

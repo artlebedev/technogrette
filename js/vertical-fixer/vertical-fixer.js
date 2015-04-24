@@ -15,14 +15,11 @@
  */
 
 
-// @require als.js.
-var als = als || {};
+goog.provide('als.VerticalFixer');
+goog.require('als');
 /*
- Replace this with:
-   goog.provide('als.VerticalFixer');
-   goog.require('als');
-
- if your project framework is Closure Library.
+  Replace this with `var als = als || {};`
+  if your project is not dependant on Closure Library.
 */
 
 
@@ -231,9 +228,8 @@ als.VerticalFixer.prototype.getPosition_ = function() {
   /** @type {{ top: number, bottom: number }} */
   var bounds = this.getBounds_();
 
-  /** @type {number} */
-  var freeTop =
-      (/** @type {number} */ this.window_.scrollTop()) + this.topMargin_;
+  var freeTop = /** @type {number} */
+      (this.window_.scrollTop()) + this.topMargin_;
 
   /** @type {number} */
   var height = this.root_.innerHeight();

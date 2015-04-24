@@ -129,8 +129,12 @@ EnvironmentForCss.prototype.getBrowserClasses_ = function() {
       classes.push('safari' + parseInt(versionMatch[1], 10));
     }
 
-  } else if (/opera/.test(this.userAgent_) || /opera/i.test(window.navigator.vendor)) {
+  } else if (
+      /opera/.test(this.userAgent_) ||
+      /opera/i.test(window.navigator.vendor)
+  ) {
     classes.push('opera', 'webkit');
+
   } else if (/chrome/.test(this.userAgent_)) {
     classes.push('chrome', 'webkit');
   }
