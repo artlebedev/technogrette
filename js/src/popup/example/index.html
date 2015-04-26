@@ -11,9 +11,9 @@
 </head>
 <body>
 
-  <span class="pseudo opener1">Simple popup</span>
+  <span class="opener1 pseudo">Simple popup</span>
   <div class="popup popup1 not_display">
-    <span class="popup_close">&times;</span>
+    <span class="popup_close_icon popup_close">&times;</span>
     Popup content
   </div>
   <script type="text/javascript">
@@ -41,12 +41,12 @@
 
 
   <!-- We use 'popup_positioner' css class here to match 2 openers visually -->
-  <span class="pseudo popup_positioner opener2">Opener above popup</span>
+  <span class="opener2 popup_positioner pseudo">Opener above popup</span>
   <div class="popup popup2" style="display:none">
-    <span class="popup_close">&times;</span>
-
-    <span class="pseudo popup_positioner opener2">Opener above popup</span>
+    <span class="popup_close_icon popup_close">&times;</span>
+    <span class="popup_positioner popup_close pseudo">Opener above popup</span>
     <br /><br />
+
     <strong>Popup content</strong>
   </div>
   <script type="text/javascript">
@@ -64,10 +64,10 @@
 
 
 
-  <span class="pseudo opener3">Modal popup</span>
+  <span class="opener3 pseudo">Modal popup</span>
   <div class="popup3 not_display">
     <div class="popup holder">
-      <span class="popup_close">&times;</span>
+      <span class="popup_close_icon popup_close">&times;</span>
       <p>Modal popup content.</p>
       <p>Click on dark area closes popup.</p>
     </div>
@@ -87,11 +87,11 @@
 
 
 
-  <span class="pseudo opener4">Popup initialized before opener</span>
+  <span class="opener4 pseudo">Popup initialized before opener</span>
   <br />
   <span>(e.g. when opener is ajax loaded)</span>
   <div class="popup popup4 not_display">
-    <span class="popup_close">&times;</span>
+    <span class="popup_close_icon popup_close">&times;</span>
     Popup content
   </div>
   <script type="text/javascript">
@@ -117,6 +117,74 @@
           });
         });
   </script>
+
+
+
+
+
+  <br /><br /><br /><br /><br /><br />
+
+
+
+
+  <p>Popup may also have multiple openers</p>
+  <span class="opener5-1 pseudo">Opener 1</span>
+  <span class="opener5-2 pseudo">Opener 2</span>
+  <div class="popup popup5 not_display">
+    <span class="popup_close_icon popup_close">&times;</span>
+    Popup content
+  </div>
+  <script type="text/javascript">
+    // passing 2-elements jQuery set as 2nd argument
+    var popup5 = new als.Popup(
+        jQuery('.popup5'), jQuery('.opener5-1, .opener5-2'), undefined, 150);
+
+    popup5.addEventListener(
+        als.Popup.EventType.BEFORE_OPEN,
+        /**
+         * @param {!als.Popup.OpenEvent} event
+         */
+        function(event) {
+          // getting exact opener from event object
+          if (event.opener) {
+            var popupRoot = jQuery('.popup5');
+
+            popupRoot.css({
+              left: event.opener.offset().left + event.opener.width() + 30,
+              top: event.opener.offset().top - 20
+            });
+          }
+        });
+  </script>
+
+
+
+
+
+  <br /><br /><br /><br /><br /><br />
+
+
+
+
+  <p>You can still use .popup_positioner when multiple openers are used</p>
+  <span class="opener6-1 popup_positioner pseudo">Opener</span>
+  <span class="opener6-2 popup_positioner pseudo">Opener</span>
+  <div class="popup popup6 not_display">
+    <span class="popup_close_icon popup_close">&times;</span>
+    <span class="popup_positioner popup_close pseudo">Opener</span>
+    <br /><br />
+
+    <strong>Popup content</strong>
+  </div>
+  <script type="text/javascript">
+    new als.Popup(
+        jQuery('.popup6'), jQuery('.opener6-1, .opener6-2'), undefined, 150);
+  </script>
+
+
+
+  <br /><br /><br /><br /><br /><br />
+
 
 
 
@@ -151,14 +219,14 @@
       box-shadow: 0 0 15px gray;
     }
 
-    .popup .popup_close{
+    .popup .popup_close_icon{
       font-size: 20px;
       position: absolute;
       right: 10px;
       top: 7px;
       cursor: pointer;
     }
-    .popup .popup_close:hover{
+    .popup .popup_close_icon:hover{
       color: #c90000;
     }
 
@@ -180,6 +248,12 @@
       margin-left: -280px;
       padding: 100px 30px;
       text-align: center;
+    }
+
+
+    .opener5-1,
+    .opener6-1{
+      margin-right: 300px;
     }
   </style>
 

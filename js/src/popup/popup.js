@@ -10,11 +10,11 @@
 
 /**
  * @fileoverview Class representing popup - block which display is toggled
- * by clicks on opener element.
- * Popup can be hid:
- *  - by click on inner .popup_close element (als.Popup.CLASS_CLOSE_BUTTON);
- *  - by click on external clicks catcher (see constructor 3rd parameter);
- *  - by hitting Escape key on keyboard.
+ * by clicks on opener element(s).
+ * You may hide popup by:
+ *  - clicking on inner .popup_close element (als.Popup.CLASS_CLOSE_BUTTON);
+ *  - clicking on external clicks catcher (see constructor 3rd parameter);
+ *  - hitting Escape key on keyboard.
  *
  *  Class is looking for .popup_positioner (als.Popup.CLASS_POSITIONER) elements
  *  inside popup root and inside opener to determine elements that should
@@ -38,8 +38,9 @@ goog.require('als');
 
 /**
  * @param {!jQuery} root  Popup root element.
- * @param {!jQuery=} opt_opener  Element click on which toggles popup display.
- *    Defaults to null (there is no opener element).
+ * @param {!jQuery=} opt_openers  Elements click on which toggles popup display.
+ *    Defaults to null (there is no opener elements). You can pass one or
+ *    multiple openers as a regular jQuery set.
  * @param {!jQuery=} opt_externalClickCatcher  Element click on which
  *    closes popup (if click was outside popup element).
  *    Defaults to document - any click outside popup root element closes it.
@@ -49,7 +50,8 @@ goog.require('als');
  *
  * @constructor
  */
-als.Popup = function(root, opt_opener, opt_externalClickCatcher, opt_duration) {
+als.Popup = function(
+    root, opt_openers, opt_externalClickCatcher, opt_duration) {
 
   /**
    * @type {!jQuery}
@@ -58,10 +60,16 @@ als.Popup = function(root, opt_opener, opt_externalClickCatcher, opt_duration) {
   this.root_ = root;
 
   /**
-   * @type {jQuery}
+   * @type {?jQuery}
    * @private
    */
-  this.opener_ = opt_opener || null;
+  this.openers_ = (opt_openers || null);
+
+  /**
+   * @type {?jQuery}
+   * @private
+   */
+  this.lastUsedOpener_ = null;
 
   /**
    * @private
@@ -70,16 +78,11 @@ als.Popup = function(root, opt_opener, opt_externalClickCatcher, opt_duration) {
       (this.root_.find('.' + als.Popup.CLASS_CLOSE_BUTTON));
 
   /**
-   * @type {jQuery}
+   * @type {!jQuery}
    * @private
    */
-  this.positionerInsidePopup_ = null;
-
-  /**
-   * @type {jQuery}
-   * @private
-   */
-  this.positionerOutsidePopup_ = null;
+  this.positionerInsidePopup_ =
+      this.root_.find('.' + als.Popup.CLASS_POSITIONER);
 
   /**
    * @private
@@ -91,7 +94,7 @@ als.Popup = function(root, opt_opener, opt_externalClickCatcher, opt_duration) {
    * @type {?(string|number)}
    * @private
    */
-  this.duration_ = opt_duration || null;
+  this.duration_ = (opt_duration || null);
 
   /**
    * @private
@@ -114,7 +117,6 @@ als.Popup = function(root, opt_opener, opt_externalClickCatcher, opt_duration) {
 
 
   this.initVisibility_();
-  this.findPositioners_();
   this.attachEvents_();
 };
 
@@ -127,6 +129,26 @@ als.Popup.EventType = {
   AFTER_OPEN: 'after-open',
   BEFORE_CLOSE: 'before-close',
   AFTER_CLOSE: 'after-close'
+};
+
+
+/**
+ * @param {string} openEventType
+ * @param {!jQuery=} opt_opener
+ * @constructor
+ * @extends {jQuery.event}
+ */
+als.Popup.OpenEvent = function(openEventType, opt_opener) {
+  /**
+   * @type {string}
+   */
+  this.type = openEventType;
+
+  /**
+   * @type {?jQuery}  If null, open event was triggered by calling
+   *    toggle()/open() method programmatically.
+   */
+  this.opener = (opt_opener || null);
 };
 
 
@@ -165,78 +187,43 @@ als.Popup.prototype.isClosed = function() {
 };
 
 
-als.Popup.prototype.toggle = function() {
+/**
+ * @param {!jQuery=} opt_opener
+ */
+als.Popup.prototype.toggle = function(opt_opener) {
   if (this.closed_) {
-    this.open();
+    this.open(opt_opener);
   } else {
     this.close();
   }
 };
 
 
-als.Popup.prototype.open = function() {
-  /** @type {als.Popup} */
-  var that = this;
-
-  if (!this.closed_ || this.aniInProgress_) {
-    return;
-  }
-
-  if (this.duration_) {
-    this.aniInProgress_ = true;
-
-    this.root_.css({
-      'opacity': 0,
-      'display': ''
-    });
-
-    this.positionIfPossible_();
-    this.eventsDispatcher_.trigger(als.Popup.EventType.BEFORE_OPEN);
-
-    this.root_.animate({ 'opacity': 1 }, this.duration_, 'linear', function() {
-      that.closed_ = false;
-      that.aniInProgress_ = false;
-      that.eventsDispatcher_.trigger(als.Popup.EventType.AFTER_OPEN);
-    });
-  } else {
-    this.root_.css({
-      'visibility': 'hidden',
-      'display': ''
-    });
-
-    this.positionIfPossible_();
-    this.eventsDispatcher_.trigger(als.Popup.EventType.BEFORE_OPEN);
-
-    this.closed_ = false;
-    this.root_.css('visibility', '');
-    this.eventsDispatcher_.trigger(als.Popup.EventType.AFTER_OPEN);
+/**
+ * @param {!jQuery=} opt_opener
+ * @param {!function()=} opt_onComplete
+ */
+als.Popup.prototype.open = function(opt_opener, opt_onComplete) {
+  if (this.closed_ && !this.aniInProgress_) {
+    if (this.duration_) {
+      this.openWithAnimation_(opt_opener, opt_onComplete);
+    } else {
+      this.openInstantly_(opt_opener, opt_onComplete);
+    }
   }
 };
 
 
-als.Popup.prototype.close = function() {
-  /** @type {als.Popup} */
-  var that = this;
-
-  if (this.closed_ || this.aniInProgress_) {
-    return;
-  }
-
-  this.eventsDispatcher_.trigger(als.Popup.EventType.BEFORE_CLOSE);
-
-  if (this.duration_) {
-    this.aniInProgress_ = true;
-
-    this.root_.animate({ 'opacity': 0 }, this.duration_, 'linear', function() {
-      that.root_.css('display', 'none');
-      that.closed_ = true;
-      that.aniInProgress_ = false;
-      that.eventsDispatcher_.trigger(als.Popup.EventType.AFTER_CLOSE);
-    });
-  } else {
-    this.closed_ = true;
-    that.root_.css('display', 'none');
-    this.eventsDispatcher_.trigger(als.Popup.EventType.AFTER_CLOSE);
+/**
+ * @param {!function()=} opt_onComplete
+ */
+als.Popup.prototype.close = function(opt_onComplete) {
+  if (!this.closed_ && !this.aniInProgress_) {
+    if (this.duration_) {
+      this.closeWithAnimation_(opt_onComplete);
+    } else {
+      this.closeInstantly_(opt_onComplete);
+    }
   }
 };
 
@@ -276,43 +263,17 @@ als.Popup.prototype.initVisibility_ = function() {
 /**
  * @private
  */
-als.Popup.prototype.findPositioners_ = function() {
-  if (!this.opener_) {
-    return;
-  }
-
-  /** @type {jQuery} */
-  var positionerInsidePopup =
-      this.root_.find('.' + als.Popup.CLASS_POSITIONER);
-
-  /** @type {jQuery} */
-  var positionerOutsidePopup =
-      this.opener_.find('.' + als.Popup.CLASS_POSITIONER);
-
-
-  if (positionerInsidePopup.length) {
-    this.positionerInsidePopup_ = positionerInsidePopup;
-
-    this.positionerOutsidePopup_ =
-        positionerOutsidePopup.length ? positionerOutsidePopup : this.opener_;
-  }
-};
-
-
-/**
- * @private
- */
 als.Popup.prototype.attachEvents_ = function() {
   /** @type {als.Popup} */
   var that = this;
 
-  if (this.opener_) {
-    this.opener_.click(
+  if (this.openers_) {
+    this.openers_.click(
         /**
-         * @param {Object} event
+         * @param {!jQuery.event} event
          */
         function(event) {
-          that.toggle();
+          that.toggleOrReopen_(jQuery(this));
           event.preventDefault();
         });
   }
@@ -344,6 +305,31 @@ als.Popup.prototype.attachEvents_ = function() {
 
 
 /**
+ * @param {!jQuery} opener
+ * @private
+ */
+als.Popup.prototype.toggleOrReopen_ = function(opener) {
+  /** @type {!als.Popup} */
+  var that = this;
+
+  if (this.closed_) {
+    this.open(opener);
+
+  } else if (!this.lastUsedOpener_ || this.lastUsedOpener_[0] !== opener[0]) {
+    this.close(
+        function() {
+          that.open(opener);
+        });
+
+  } else {
+    this.close();
+  }
+
+  this.lastUsedOpener_ = opener;
+};
+
+
+/**
  * @param {!jQuery.event} event
  *
  * @private
@@ -358,16 +344,16 @@ als.Popup.prototype.onCatcherClick_ = function(event) {
       this.root_.is(event.target) || this.root_.has(event.target).length > 0);
 
   /** @type {boolean} */
-  var insideOpener = false;
-  if (this.opener_ !== null) {
-    insideOpener = (
-        this.opener_.is(event.target) ||
-        this.opener_.has(event.target).length > 0);
+  var insideOpeners = false;
+  if (this.openers_ !== null) {
+    insideOpeners = (
+        this.openers_.is(event.target) ||
+        this.openers_.has(event.target).length > 0);
   }
 
   /** @type {boolean} */
   var outside =
-      (!insidePopup && !insideOpener) ||
+      (!insidePopup && !insideOpeners) ||
           event.target === this.externalClickCatcher_[0];
 
 
@@ -378,15 +364,146 @@ als.Popup.prototype.onCatcherClick_ = function(event) {
 
 
 /**
+ * @param {!jQuery=} opt_opener
+ * @param {!function()=} opt_onComplete
  * @private
  */
-als.Popup.prototype.positionIfPossible_ = function() {
-  if (!this.positionerInsidePopup_ || !this.positionerOutsidePopup_) {
+als.Popup.prototype.openInstantly_ = function(opt_opener, opt_onComplete) {
+  this.root_.css({
+    'visibility': 'hidden',
+    'display': ''
+  });
+
+  if (opt_opener) {
+    this.positionIfPossible_(opt_opener);
+  }
+
+  this.eventsDispatcher_.trigger(
+      new als.Popup.OpenEvent(als.Popup.EventType.BEFORE_OPEN, opt_opener));
+
+  this.closed_ = false;
+  this.root_.css('visibility', '');
+
+  if (opt_onComplete) {
+    opt_onComplete();
+  }
+
+  this.eventsDispatcher_.trigger(
+      new als.Popup.OpenEvent(als.Popup.EventType.AFTER_OPEN, opt_opener));
+};
+
+
+/**
+ * @param {!function()=} opt_onComplete
+ * @private
+ */
+als.Popup.prototype.closeInstantly_ = function(opt_onComplete) {
+  this.eventsDispatcher_.trigger(als.Popup.EventType.BEFORE_CLOSE);
+
+  this.closed_ = true;
+  this.root_.css('display', 'none');
+
+  if (opt_onComplete) {
+    opt_onComplete();
+  }
+
+  this.eventsDispatcher_.trigger(als.Popup.EventType.AFTER_CLOSE);
+};
+
+
+/**
+ * @param {!jQuery=} opt_opener
+ * @param {!function()=} opt_onComplete
+ * @private
+ */
+als.Popup.prototype.openWithAnimation_ = function(opt_opener, opt_onComplete) {
+  /** @type {!als.Popup} */
+  var that = this;
+
+  this.aniInProgress_ = true;
+
+  this.root_.css({
+    'opacity': 0,
+    'display': ''
+  });
+
+  if (opt_opener) {
+    this.positionIfPossible_(opt_opener);
+  }
+
+  this.eventsDispatcher_.trigger(
+      new als.Popup.OpenEvent(als.Popup.EventType.BEFORE_OPEN, opt_opener));
+
+  this.root_.animate(
+      { 'opacity': 1 },
+      {
+        'duration': this.duration_,
+        'easing': 'linear',
+        'complete': function() {
+          that.closed_ = false;
+          that.aniInProgress_ = false;
+
+          if (opt_onComplete) {
+            opt_onComplete();
+          }
+
+          that.eventsDispatcher_.trigger(
+              new als.Popup.OpenEvent(
+                  als.Popup.EventType.AFTER_OPEN, opt_opener));
+        }
+      });
+};
+
+
+/**
+ * @param {!function()=} opt_onComplete
+ * @private
+ */
+als.Popup.prototype.closeWithAnimation_ = function(opt_onComplete) {
+  /** @type {!als.Popup} */
+  var that = this;
+
+  this.eventsDispatcher_.trigger(als.Popup.EventType.BEFORE_CLOSE);
+
+  this.aniInProgress_ = true;
+
+  this.root_.animate(
+      { 'opacity': 0 },
+      {
+        'duration': this.duration_,
+        'easing': 'linear',
+        'complete': function() {
+          that.root_.css('display', 'none');
+          that.closed_ = true;
+          that.aniInProgress_ = false;
+
+          if (opt_onComplete) {
+            opt_onComplete();
+          }
+
+          that.eventsDispatcher_.trigger(als.Popup.EventType.AFTER_CLOSE);
+        }
+      });
+};
+
+
+
+/**
+ * @param {!jQuery} opener
+ * @private
+ */
+als.Popup.prototype.positionIfPossible_ = function(opener) {
+  /** @type {!jQuery} */
+  var positionerInsideOpener = this.getPositionerInsideOpener_(opener);
+
+  if (positionerInsideOpener.length === 0 ||
+      this.positionerInsidePopup_.length === 0) {
+
     return;
   }
 
-  var positionerOutsidePopupOffset = /** @type {{left:number, top:number}} */
-      (this.positionerOutsidePopup_.offset());
+  var positionerInsideOpenerOffset = /** @type {{left:number, top:number}} */
+      (positionerInsideOpener.offset());
 
   var positionerInsidePopupOffset = /** @type {{left:number, top:number}} */
       (this.positionerInsidePopup_.offset());
@@ -395,11 +512,24 @@ als.Popup.prototype.positionIfPossible_ = function() {
       /** @type {{left:number, top:number}} */ (this.root_.offset());
 
   this.root_.css({
-    left: (
-        positionerOutsidePopupOffset.left +
+    'left': (
+        positionerInsideOpenerOffset.left +
         (popupOffset.left - positionerInsidePopupOffset.left)),
-    top: (
-        positionerOutsidePopupOffset.top +
+    'top': (
+        positionerInsideOpenerOffset.top +
         (popupOffset.top - positionerInsidePopupOffset.top))
   });
+};
+
+
+/**
+ * @param {!jQuery} opener
+ * @return {!jQuery}
+ * @private
+ */
+als.Popup.prototype.getPositionerInsideOpener_ = function(opener) {
+  /** @type {jQuery} */
+  var positionerReallyInside = opener.find('.' + als.Popup.CLASS_POSITIONER);
+
+  return (positionerReallyInside.length ? positionerReallyInside : opener);
 };
