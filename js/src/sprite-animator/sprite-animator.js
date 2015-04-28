@@ -208,27 +208,36 @@ als.SpriteAnimator.prototype.isAnimating = function() {
 };
 
 
+/**
+ * @return {!als.SpriteAnimator}
+ */
 als.SpriteAnimator.prototype.play = function() {
-  if (this.animating_) {
-    return;
-  }
-
-  this.animating_ = true;
-  this.runLoop_();
-};
-
-
-als.SpriteAnimator.prototype.pause = function() {
   if (!this.animating_) {
-    return;
+    this.animating_ = true;
+    this.runLoop_();
   }
 
-  this.animating_ = false;
-  clearTimeout(this.loopTimeout_);
-  this.eventsDispatcher_.trigger(als.SpriteAnimator.EventType.PAUSE);
+  return this;
 };
 
 
+/**
+ * @return {!als.SpriteAnimator}
+ */
+als.SpriteAnimator.prototype.pause = function() {
+  if (this.animating_) {
+    this.animating_ = false;
+    clearTimeout(this.loopTimeout_);
+    this.eventsDispatcher_.trigger(als.SpriteAnimator.EventType.PAUSE);
+  }
+
+  return this;
+};
+
+
+/**
+ * @return {!als.SpriteAnimator}
+ */
 als.SpriteAnimator.prototype.rewind = function() {
   clearTimeout(this.loopTimeout_);
   this.currentFrame_ = als.SpriteAnimator.DEFAULT_START_FRAME;
@@ -237,15 +246,20 @@ als.SpriteAnimator.prototype.rewind = function() {
   if (this.animating_) {
     this.runLoop_();
   }
+
+  return this;
 };
 
 
 /**
  * @param {number} frame
+ * @return {!als.SpriteAnimator}
  */
 als.SpriteAnimator.prototype.moveToFrame = function(frame) {
   this.throwErrorIfFrameIsInvalid_(frame);
   this.moveToFrame_(frame);
+
+  return this;
 };
 
 
