@@ -54,10 +54,10 @@ goog.provide('als.SpriteAnimator');
  * @param {!als.SpriteAnimator.Prop=} opt_propToAnimate  Defaults to
  *    als.SpriteAnimator.Prop.BACKGROUND_POSITION which means animator will
  *    animate background-position css property, rather than left/top.
- * @param {!Array.<number>=} opt_pauseFrames  Frame numbers where animation
- *    should be paused and als.SpriteAnimator.EventType.PAUSE event will be
- *    triggered. First frame is 1. Pass here a number of last frame if you
- *    don't want animation to be repeated.
+ * @param {(number | !Array.<number>)=} opt_pauseFrames  Frame numbers where
+ *    animation should be paused and als.SpriteAnimator.EventType.PAUSE event
+ *    will be triggered. First frame is 1. Pass here a number of last frame
+ *    if you don't want animation to be looped.
  * @param {number=} opt_framesCount  Count of frames in your sprite. It's
  *    calculated based on frameSize and spriteSize parameters by default.
  *    This parameter is useful if you have sprite containing several rows and
@@ -87,7 +87,7 @@ als.SpriteAnimator = function(
    * @private
    */
   this.propToAnimate_ =
-      opt_propToAnimate || als.SpriteAnimator.Prop.BACKGROUND_POSITION;
+      (opt_propToAnimate || als.SpriteAnimator.Prop.BACKGROUND_POSITION);
 
   /**
    * @type {!{ width: number, height: number }}
@@ -105,7 +105,7 @@ als.SpriteAnimator = function(
    * @type {!Array.<number>}
    * @private
    */
-  this.pauseFrames_ = opt_pauseFrames || [];
+  this.pauseFrames_ = this.normalizePauseFrames_(opt_pauseFrames || []);
 
   /**
    * @type {boolean}
@@ -160,6 +160,7 @@ als.SpriteAnimator = function(
   this.loopTimeout_ = 0;
 
   /**
+   * @type {!jQuery}
    * @private
    */
   this.eventsDispatcher_ = jQuery({});
@@ -456,13 +457,27 @@ als.SpriteAnimator.prototype.normalizeSize_ = function(size) {
 
 
 /**
+ * @param {(number | !Array.<number>)} pauseFrames
+ * @return {!Array.<number>}
+ * @private
+ */
+als.SpriteAnimator.prototype.normalizePauseFrames_ = function(pauseFrames) {
+  if (typeof pauseFrames === 'number') {
+    return [pauseFrames];
+  } else {
+    return pauseFrames;
+  }
+};
+
+
+/**
  * @param {number} frame
  * @private
  */
 als.SpriteAnimator.prototype.throwErrorIfFrameIsInvalid_ = function(frame) {
-  if (frame > this.framesCount_) {
+  if (frame < 1 || frame > this.framesCount_) {
     throw Error(
-        'Frame number must be lower or equal ' + this.framesCount_ +
+        'Frame number must be between 1 and ' + this.framesCount_ +
             '. Found: ' + frame);
   }
 };
